@@ -1,0 +1,148 @@
+apiVersion: v1
+items:
+- apiVersion: policy/v1beta1
+  kind: PodDisruptionBudget
+  metadata:
+    labels:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
+    name: cockroachdb-basic
+    namespace: default
+  spec:
+    maxUnavailable: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: basic
+        app.kubernetes.io/name: cockroachdb-basic
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      service.alpha.kubernetes.io/tolerate-unready-endpoints: true
+    labels:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
+    name: cockroachdb-basic
+    namespace: default
+  spec:
+    clusterIP: None
+    ports:
+    - name: grpc
+      port: 26257
+      targetPort: 26257
+    - name: http
+      port: 8080
+      targetPort: 8080
+    publishNotReadyAddresses: true
+    selector:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic-public
+    name: cockroachdb-basic-public
+    namespace: default
+  spec:
+    ports:
+    - name: grpc
+      port: 26257
+      targetPort: 26257
+    - name: http
+      port: 8080
+      targetPort: 8080
+    selector:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
+- apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    labels:
+      app.kubernetes.io/component: database
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
+    name: cockroachdb-basic
+    namespace: default
+  spec:
+    podManagementPolicy: Parallel
+    replicas: 3
+    selector:
+      matchLabels:
+        app.kubernetes.io/component: database
+        app.kubernetes.io/instance: basic
+        app.kubernetes.io/name: cockroachdb-basic
+    serviceName: cockroachdb-basic
+    template:
+      metadata:
+        labels:
+          app.kubernetes.io/component: database
+          app.kubernetes.io/instance: basic
+          app.kubernetes.io/name: cockroachdb-basic
+        name: cockroachdb-basic
+        namespace: default
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                    - cockroachdb-basic
+                namespaces:
+                - default
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+        containers:
+        - command:
+          - /bin/bash
+          - -ecx
+          - exec /cockroach/cockroach start --logtostderr=WARNING --insecure --advertise-host=$(hostname
+            -f) --http-host=0.0.0.0 --join=cockroachdb-basic-0.cockroachdb-basic.default.svc,cockroachdb-basic-1.cockroachdb-basic.default.svc,cockroachdb-basic-2.cockroachdb-basic.default.svc
+            --cache=25% --max-sql-memory=25%
+          env:
+          - name: COCKROACH_CHANNEL
+            value: kubernetes-insecure
+          image: cockroachdb/cockroach:v20.1.0
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          name: cockroachdb
+          ports:
+          - containerPort: 26257
+            name: grpc
+          - containerPort: 8080
+            name: http
+          readinessProbe:
+            failureThreshold: 2
+            httpGet:
+              path: /health?ready=1
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources: {}
+          volumeMounts:
+          - mountPath: /cockroach/cockroach-data
+            name: datadir
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - emptyDir: {}
+          name: datadir
+    volumeClaimTemplates: []
+kind: List
