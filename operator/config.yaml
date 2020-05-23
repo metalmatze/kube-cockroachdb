@@ -1,0 +1,45 @@
+mainResource: CockroachDB
+resources:
+  - name: CockroachDB
+    kind: CockroachDB
+    apiVersion: metalmatze.de/v1alpha1
+  - name: statefulSet
+    kind: StatefulSet
+    apiVersion: apps/v1
+    keyTransformations:
+      - action: keep
+        regex: '(.*)\/cockroachdb-(.*)'
+      - regex: '(.*)\/cockroachdb-(.*)'
+        replacement: "$1/$2"
+  - name: service
+    kind: Service
+    apiVersion: v1
+    keyTransformations:
+      - action: keep
+        regex: '(.*)\/cockroachdb-(.*)'
+      - regex: '(.*)\/cockroachdb-(.*)'
+        replacement: "$1/$2"
+  - name: servicePublic
+    kind: Service
+    apiVersion: v1
+    keyTransformations:
+      - action: keep
+        regex: '(.*)\/cockroachdb-(.*)-public$'
+      - regex: '(.*)\/cockroachdb-(.*)-public$'
+        replacement: "$1/$2"
+  - name: podDisruptionBudget
+    kind: PodDisruptionBudget
+    apiVersion: policy/v1beta1
+    keyTransformations:
+      - action: keep
+        regex: '(.*)\/cockroachdb-(.*)'
+      - regex: '(.*)\/cockroachdb-(.*)'
+        replacement: "$1/$2"
+  - name: serviceMonitor
+    kind: ServiceMonitor
+    apiVersion: monitoring.coreos.com/v1
+    keyTransformations:
+      - action: keep
+        regex: '(.*)\/cockroachdb-(.*)'
+      - regex: '(.*)\/cockroachdb-(.*)'
+        replacement: "$1/$2"

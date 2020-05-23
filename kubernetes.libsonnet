@@ -47,7 +47,7 @@ function(params) {
     kind: 'Service',
     metadata: cockroachdb.metadata {
       annotations: {
-        'service.alpha.kubernetes.io/tolerate-unready-endpoints': true,
+        'service.alpha.kubernetes.io/tolerate-unready-endpoints': 'true',
       },
     },
     spec: {
@@ -85,15 +85,11 @@ function(params) {
                 '--insecure',
                 '--advertise-host=$(hostname -f)',
                 '--http-host=0.0.0.0',
-                '--join=%s' % std.join(',', [
-                  '%s-%d.%s.%s.svc' % [
-                    cockroachdb.metadata.name,
-                    i,
-                    cockroachdb.metadata.name,
-                    cockroachdb.metadata.namespace,
-                  ]
-                  for i in std.range(0, cockroachdb.replicas - 1)
-                ]),
+                '--join=%s-0.%s.%s.svc' % [
+                  cockroachdb.metadata.name,
+                  cockroachdb.metadata.name,
+                  cockroachdb.metadata.namespace,
+                ],
                 '--cache=25%',
                 '--max-sql-memory=25%',
               ],
@@ -165,8 +161,6 @@ function(params) {
       },
       volumeClaimTemplates: if std.objectHas(cockroachdb, 'pvc') then [
         {
-          apiVersion: 'v1',
-          kind: 'PersistentVolumeClaim',
           metadata: {
             name: 'datadir',
             namespace: cockroachdb.metadata.namespace,
@@ -195,36 +189,69 @@ function(params) {
     },
   },
 
-  // TODO: Figure out how to configure monitoring properly
-  // servicemonitor: {
-  //   apiVersion: 'monitoring.coreos.com/v1',
-  //   kind: 'ServiceMonitor',
-  //   metadata: cockroachdb.metadata {
-  //     labels+: {
-  //       prometheus: 'k8s',
-  //     },
-  //   },
-  //   spec: {
-  //     endpoints: [
-  //       {
-  //         port: 'http',
-  //         path: '/_status/vars',
-  //         metricRelabelings: [
-  //           {
-  //             // prefix all metric names with cockroachdb_
-  //             sourceLabels: ['__name__'],
-  //             targetLabel: '__name__',
-  //             replacement: 'cockroachdb_${1}',
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //     namespaceSelector: {
-  //       matchNames: [cockroachdb.metadata.namespace],
-  //     },
-  //     selector: {
-  //       matchLabels: cockroachdb.metadata.labels,
-  //     },
-  //   },
-  // },
+  jobInitialize: {
+    apiVersion: 'batch/v1',
+    kind: 'Job',
+    metadata: cockroachdb.metadata,
+    spec: {
+      template: {
+        metadata: {
+          labels: cockroachdb.metadata.labels,
+        },
+        spec: {
+          containers: [
+            {
+              name: 'cluster-init',
+              image: cockroachdb.image,
+              command: [
+                '/cockroach/cockroach',
+                'init',
+                '--insecure',
+                '--host=%s-0.%s.%s' % [
+                  cockroachdb.metadata.name,
+                  cockroachdb.metadata.name,
+                  cockroachdb.metadata.namespace,
+                ],
+              ],
+            },
+          ],
+          restartPolicy: 'OnFailure',
+        },
+      },
+    },
+  },
+
+  serviceMonitor: {
+    apiVersion: 'monitoring.coreos.com/v1',
+    kind: 'ServiceMonitor',
+    metadata: cockroachdb.metadata {
+      labels+: {
+        prometheus: 'k8s',
+      },
+    },
+    spec: {
+      endpoints: [
+        {
+          port: 'http',
+          path: '/_status/vars',
+          metricRelabelings: [
+            {
+              // prefix all metric names with cockroachdb_
+              sourceLabels: ['__name__'],
+              targetLabel: '__name__',
+              replacement: 'cockroachdb_${1}',
+            },
+          ],
+        },
+      ],
+      namespaceSelector: {
+        matchNames: [cockroachdb.metadata.namespace],
+      },
+      selector: {
+        matchLabels: cockroachdb.metadata.labels,
+      },
+    },
+  },
+
+  // TODO: Add backups to object storage via CronJob and Minio
 }

@@ -5,24 +5,24 @@ items:
   metadata:
     labels:
       app.kubernetes.io/component: database
-      app.kubernetes.io/instance: simple
-      app.kubernetes.io/name: cockroachdb-simple
-    name: cockroachdb-simple
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
+    name: cockroachdb-basic
     namespace: default
   spec:
     template:
       metadata:
         labels:
           app.kubernetes.io/component: database
-          app.kubernetes.io/instance: simple
-          app.kubernetes.io/name: cockroachdb-simple
+          app.kubernetes.io/instance: basic
+          app.kubernetes.io/name: cockroachdb-basic
       spec:
         containers:
         - command:
           - /cockroach/cockroach
           - init
           - --insecure
-          - --host=cockroachdb-simple-0.cockroachdb-simple.default
+          - --host=cockroachdb-basic-0.cockroachdb-basic.default
           image: cockroachdb/cockroach:v20.1.0
           name: cluster-init
         restartPolicy: OnFailure
@@ -31,17 +31,17 @@ items:
   metadata:
     labels:
       app.kubernetes.io/component: database
-      app.kubernetes.io/instance: simple
-      app.kubernetes.io/name: cockroachdb-simple
-    name: cockroachdb-simple
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
+    name: cockroachdb-basic
     namespace: default
   spec:
     maxUnavailable: 1
     selector:
       matchLabels:
         app.kubernetes.io/component: database
-        app.kubernetes.io/instance: simple
-        app.kubernetes.io/name: cockroachdb-simple
+        app.kubernetes.io/instance: basic
+        app.kubernetes.io/name: cockroachdb-basic
 - apiVersion: v1
   kind: Service
   metadata:
@@ -49,9 +49,9 @@ items:
       service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
     labels:
       app.kubernetes.io/component: database
-      app.kubernetes.io/instance: simple
-      app.kubernetes.io/name: cockroachdb-simple
-    name: cockroachdb-simple
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
+    name: cockroachdb-basic
     namespace: default
   spec:
     clusterIP: None
@@ -65,16 +65,16 @@ items:
     publishNotReadyAddresses: true
     selector:
       app.kubernetes.io/component: database
-      app.kubernetes.io/instance: simple
-      app.kubernetes.io/name: cockroachdb-simple
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
 - apiVersion: v1
   kind: Service
   metadata:
     labels:
       app.kubernetes.io/component: database
-      app.kubernetes.io/instance: simple
-      app.kubernetes.io/name: cockroachdb-simple-public
-    name: cockroachdb-simple-public
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic-public
+    name: cockroachdb-basic-public
     namespace: default
   spec:
     ports:
@@ -86,17 +86,17 @@ items:
       targetPort: 8080
     selector:
       app.kubernetes.io/component: database
-      app.kubernetes.io/instance: simple
-      app.kubernetes.io/name: cockroachdb-simple
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
 - apiVersion: monitoring.coreos.com/v1
   kind: ServiceMonitor
   metadata:
     labels:
       app.kubernetes.io/component: database
-      app.kubernetes.io/instance: simple
-      app.kubernetes.io/name: cockroachdb-simple
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
       prometheus: k8s
-    name: cockroachdb-simple
+    name: cockroachdb-basic
     namespace: default
   spec:
     endpoints:
@@ -113,33 +113,33 @@ items:
     selector:
       matchLabels:
         app.kubernetes.io/component: database
-        app.kubernetes.io/instance: simple
-        app.kubernetes.io/name: cockroachdb-simple
+        app.kubernetes.io/instance: basic
+        app.kubernetes.io/name: cockroachdb-basic
 - apiVersion: apps/v1
   kind: StatefulSet
   metadata:
     labels:
       app.kubernetes.io/component: database
-      app.kubernetes.io/instance: simple
-      app.kubernetes.io/name: cockroachdb-simple
-    name: cockroachdb-simple
+      app.kubernetes.io/instance: basic
+      app.kubernetes.io/name: cockroachdb-basic
+    name: cockroachdb-basic
     namespace: default
   spec:
     podManagementPolicy: Parallel
-    replicas: 1
+    replicas: 3
     selector:
       matchLabels:
         app.kubernetes.io/component: database
-        app.kubernetes.io/instance: simple
-        app.kubernetes.io/name: cockroachdb-simple
-    serviceName: cockroachdb-simple
+        app.kubernetes.io/instance: basic
+        app.kubernetes.io/name: cockroachdb-basic
+    serviceName: cockroachdb-basic
     template:
       metadata:
         labels:
           app.kubernetes.io/component: database
-          app.kubernetes.io/instance: simple
-          app.kubernetes.io/name: cockroachdb-simple
-        name: cockroachdb-simple
+          app.kubernetes.io/instance: basic
+          app.kubernetes.io/name: cockroachdb-basic
+        name: cockroachdb-basic
         namespace: default
       spec:
         affinity:
@@ -151,7 +151,7 @@ items:
                   - key: app.kubernetes.io/name
                     operator: In
                     values:
-                    - cockroachdb-simple
+                    - cockroachdb-basic
                 namespaces:
                 - default
                 topologyKey: kubernetes.io/hostname
@@ -161,7 +161,7 @@ items:
           - /bin/bash
           - -ecx
           - exec /cockroach/cockroach start --logtostderr=WARNING --insecure --advertise-host=$(hostname
-            -f) --http-host=0.0.0.0 --join=cockroachdb-simple-0.cockroachdb-simple.default.svc
+            -f) --http-host=0.0.0.0 --join=cockroachdb-basic-0.cockroachdb-basic.default.svc
             --cache=25% --max-sql-memory=25%
           env:
           - name: COCKROACH_CHANNEL
@@ -195,7 +195,18 @@ items:
             name: datadir
         terminationGracePeriodSeconds: 60
         volumes:
-        - emptyDir: {}
-          name: datadir
-    volumeClaimTemplates: []
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: datadir
+    volumeClaimTemplates:
+    - metadata:
+        name: datadir
+        namespace: default
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: standard
 kind: List
