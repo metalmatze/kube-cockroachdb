@@ -1,7 +1,7 @@
 local kubernetes = import '../../kubernetes.libsonnet';
 
-local basic = kubernetes({
-  name: 'basic',
+local objects = kubernetes({
+  name: 'example',
   replicas: 3,
 });
 
@@ -10,5 +10,5 @@ local basic = kubernetes({
   apiVersion: 'v1',
   kind: 'List',
   items:
-    [basic[name] for name in std.objectFields(basic)],
+    [objects[name] for name in std.objectFields(objects)],
 }
