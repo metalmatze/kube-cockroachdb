@@ -1,5 +1,9 @@
 build: operator/operator
 
+.PHONY: test
+test:
+	go test -v ./operator/...
+
 operator/operator: $(shell find ./operator -type f -name '*.go')
 	go build -v -o operator ./operator/...
 
@@ -21,3 +25,7 @@ examples/basic/basic.yaml: examples/basic/basic.jsonnet kubernetes.libsonnet
 examples/pvc/pvc.yaml: examples/pvc/pvc.jsonnet kubernetes.libsonnet
 	jsonnetfmt -i kubernetes.libsonnet examples/pvc/pvc.jsonnet
 	jsonnet examples/pvc/pvc.jsonnet | gojsontoyaml > examples/pvc/pvc.yaml
+
+PHONY: .tags
+.tags:
+	git rev-parse --short HEAD > .tags

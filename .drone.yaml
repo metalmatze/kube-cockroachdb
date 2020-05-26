@@ -1,0 +1,44 @@
+---
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /go
+  path: src/github.com/metalmatze/kube-cockroachdb
+
+steps:
+  - name: build
+    pull: always
+    image: golang:1.14-alpine
+    environment:
+      GOPROXY: https://proxy.golang.org
+    commands:
+      - apk add -U git make
+      - make build
+      - make test
+      - make tags
+    when:
+      event:
+        - push
+        - tag
+        - pull_request
+
+  - name: docker
+    image: plugins/docker
+    pull: always
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      repo: quay.io/metalmatze/kube-cockroachdb
+      tag:
+        - latest
+    when:
+      event:
+        - push
+        - tag
