@@ -16,6 +16,4 @@ require (
 	sigs.k8s.io/controller-tools v0.3.0 // indirect
 )
 
-replace github.com/brancz/locutus => /home/metalmatze/src/github.com/brancz/locutus
-
-replace k8s.io/klog => github.com/simonpasquier/klog-gokit v0.1.0
+replace github.com/brancz/locutus => github.com/metalmatze/locutus v0.0.0-20200526233827-d87182291dbf
