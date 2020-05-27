@@ -75,7 +75,7 @@ func main() {
 		cl := client.NewClient(konfig, klient)
 		cl.SetUpdatePreparations([]client.UpdatePreparation{
 			client.UpdatePreparationFunc(client.PrepareServiceForUpdate),
-			client.UpdatePreparationFunc(client.PrepareStatefulsetForUpdate),
+			//client.UpdatePreparationFunc(client.PrepareStatefulsetForUpdate),
 		})
 
 		renderer := jsonnet.NewRenderer(logger, jsonnetPath)

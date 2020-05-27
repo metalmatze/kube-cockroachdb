@@ -8,10 +8,10 @@ operator/operator: $(shell find ./operator -type f -name '*.go')
 	go build -v -o operator ./operator/...
 
 operator/metalmatze.de_cockroachdbs.yaml: controller-gen $(shell find ./operator/api/v1alphav1 -type f -name '*.go')
-	controller-gen crd paths="./operator/..." output:crd:artifacts:config=./operator
+	./controller-gen crd paths="./operator/..." output:crd:artifacts:config=./operator
 
 operator/api/v1alphav1/zz_generated.deepcopy.go: controller-gen $(shell find ./operator/api/v1alphav1 -type f -name '*.go' -not -name '*.deepcopy.go')
-	controller-gen object paths="./operator/..."
+	./controller-gen object paths="./operator/..."
 
 controller-gen:
 	GO111MODULE="on" go build -o $@ sigs.k8s.io/controller-tools/cmd/controller-gen

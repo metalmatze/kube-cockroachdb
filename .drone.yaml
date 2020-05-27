@@ -18,7 +18,6 @@ steps:
       GOPROXY: https://proxy.golang.org
     commands:
       - apk add -U git make
-      - make controller-gen
       - make build
       - make test
       - make tags
