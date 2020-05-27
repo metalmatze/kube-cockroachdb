@@ -14,7 +14,7 @@ operator/api/v1alphav1/zz_generated.deepcopy.go: controller-gen $(shell find ./o
 	./controller-gen object paths="./operator/..."
 
 controller-gen:
-	GO111MODULE="on" go build -o $@ sigs.k8s.io/controller-tools/cmd/controller-gen
+	CGO_ENABLED=0 GO111MODULE="on" go build -o $@ sigs.k8s.io/controller-tools/cmd/controller-gen
 
 examples: examples/basic/basic.yaml examples/simple/simple.yaml examples/pvc/pvc.yaml
 
@@ -25,6 +25,12 @@ examples/basic/basic.yaml: examples/basic/basic.jsonnet kubernetes.libsonnet
 examples/pvc/pvc.yaml: examples/pvc/pvc.jsonnet kubernetes.libsonnet
 	jsonnetfmt -i kubernetes.libsonnet examples/pvc/pvc.jsonnet
 	jsonnet examples/pvc/pvc.jsonnet | gojsontoyaml > examples/pvc/pvc.yaml
+
+embedmd:
+	GO111MODULE="on" go build -o $@ github.com/campoy/embedmd
+
+docs/content/_index.md: embedmd $(shell find examples/ -name "*.jsonnet")
+	embedmd -w `find docs -name "*.md"`
 
 PHONY: .tags
 .tags:
