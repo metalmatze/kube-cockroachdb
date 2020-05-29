@@ -20,7 +20,7 @@ steps:
       - apk add -U git make
       - make build -o operator/api/v1alphav1/zz_generated.deepcopy.go
       - make test
-      - make tags
+      - make .tags
     when:
       event:
         - push
