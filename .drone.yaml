@@ -17,8 +17,8 @@ steps:
     environment:
       GOPROXY: https://proxy.golang.org
     commands:
-      - apk add -U gcc git make
-      - make build
+      - apk add -U git make
+      - make build -o operator/api/v1alphav1/zz_generated.deepcopy.go
       - make test
       - make tags
     when:
