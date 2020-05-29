@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/brancz/locutus v0.0.0-20200430073700-65b7640ed9bc
+	github.com/campoy/embedmd v1.0.0 // indirect
 	github.com/go-kit/kit v0.10.0
 	github.com/metalmatze/signal v0.0.0-20200428133549-c4243ecaf121
 	github.com/oklog/run v1.1.0
