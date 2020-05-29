@@ -17,7 +17,7 @@ steps:
     environment:
       GOPROXY: https://proxy.golang.org
     commands:
-      - apk add -U git make
+      - apk add -U gcc git make
       - make build
       - make test
       - make tags
