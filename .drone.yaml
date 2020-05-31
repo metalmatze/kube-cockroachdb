@@ -21,6 +21,7 @@ steps:
       - make build -o operator/api/v1alphav1/zz_generated.deepcopy.go
       - make test
       - make .tags
+      - cp ./kubernetes.libsonnet ./operator/kubernetes.libsonnet
     when:
       event:
         - push
@@ -31,6 +32,7 @@ steps:
     image: plugins/docker
     pull: always
     settings:
+      context: operator
       username:
         from_secret: docker_username
       password:
