@@ -13,6 +13,10 @@ operator/metalmatze.de_cockroachdbs.yaml: tmp/bin/controller-gen $(shell find ./
 operator/api/v1alphav1/zz_generated.deepcopy.go: tmp/bin/controller-gen $(shell find ./operator/api/v1alphav1 -type f -name '*.go' -not -name '*.deepcopy.go')
 	./tmp/bin/controller-gen object paths="./operator/..."
 
+operator/deployment.yaml: operator/deployment.jsonnet
+	jsonnetfmt -i operator/deployment.jsonnet
+	jsonnet operator/deployment.jsonnet | gojsontoyaml > operator/deployment.yaml
+
 tmp/bin/controller-gen:
 	CGO_ENABLED=0 GO111MODULE="on" go build -o $@ sigs.k8s.io/controller-tools/cmd/controller-gen
 
