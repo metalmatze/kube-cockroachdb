@@ -33,11 +33,13 @@ steps:
     pull: always
     settings:
       context: operator
+      dockerfile: operator/Dockerfile
+      registry: quay.io
+      repo: quay.io/metalmatze/kube-cockroachdb
       username:
         from_secret: docker_username
       password:
         from_secret: docker_password
-      repo: quay.io/metalmatze/kube-cockroachdb
       tag:
         - latest
     when:
