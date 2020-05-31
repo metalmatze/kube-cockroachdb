@@ -45,5 +45,4 @@ tmp/bin/gh-md-toc:
 
 PHONY: .tags
 .tags:
-	git rev-parse --short HEAD > .tags
-	echo latest >> .tags
+	 echo "latest,$(shell git rev-parse --short HEAD)" > .tags
