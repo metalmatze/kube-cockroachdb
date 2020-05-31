@@ -100,7 +100,16 @@ The Operator comes as a pre-build container images: [quay.io/metalmatze/kube-coc
 The `operator/deployment/` contains a file that you can use to the deploy an instance of the Operator to deploy it to the `cockroachdb` namespace in your cluster. It'll start watching all `CockroachDB` Custom Resource Definitions (CRDs) in all namespaces by default.
 
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/metalmatze/kube-cockroachdb/master/operator/deployment/deployment.yaml
+# Operator currently depends on the ServiceMonitor CRD
+kubectl apply -f https://raw.githubusercontent.com/coreos/kube-prometheus/master/manifests/setup/prometheus-operator-0servicemonitorCustomResourceDefinition.yaml
+# CockroachDB Custom Resource Definition
+kubectl apply -f https://raw.githubusercontent.com/metalmatze/kube-cockroachdb/master/operator/metalmatze.de_cockroachdbs.yaml
+# We'll deploy the operator to this namespace
+kubectl create namespace kube-cockroachdb
+# Deploy the actual operator
+kubectl apply -f https://raw.githubusercontent.com/metalmatze/kube-cockroachdb/master/operator/deployment.yaml
+# Optionally deploy a example instance
+kubectl apply -f https://raw.githubusercontent.com/metalmatze/kube-cockroachdb/master/operator/examples/basic.yaml
 ```
 
 *If you want an Operator deployment that's only able to read and write it's own namespace, please open an issue. I'm happy to add this upon request.*
