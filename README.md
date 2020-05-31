@@ -1,5 +1,5 @@
 # Kube-CockroachDB
-[![Docker Repository on Quay](https://quay.io/repository/metalmatze/kube-cockroachdb/status "Docker Repository on Quay")](https://quay.io/repository/metalmatze/kube-cockroachdb)
+[![Docker Repository on Quay](https://quay.io/repository/metalmatze/kube-cockroachdb/status "Docker Repository on Quay")](https://quay.io/repository/metalmatze/kube-cockroachdb) [![Build Status](https://cloud.drone.io/api/badges/metalmatze/kube-cockroachdb/status.svg)](https://cloud.drone.io/metalmatze/kube-cockroachdb)
 
 Deploy [CockroachDB](https://www.cockroachlabs.com/product/) on [Kubernetes](https://kubernetes.io/) using [YAML](https://yaml.org/) or an [Operator](https://coreos.com/blog/introducing-operators.html).
 
