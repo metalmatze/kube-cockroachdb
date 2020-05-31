@@ -23,7 +23,7 @@ Deploy [CockroachDB](https://www.cockroachlabs.com/product/) on [Kubernetes](htt
 
 ## YAML with Jsonnet & CockroachDB Operator
 
-The main focus of this project is to generate all necessary Kubernetes files, like StatefulSets, Services, CronJobs, and more with [Jsonnet](https://jsonnet.org).  
+The main focus of this project is to generate all necessary Kubernetes files, like StatefulSets, Services, CronJobs, and more with [Jsonnet](https://jsonnet.org).
 The idea is to build an abstraction layer on top of the Kubernetes objects, which allows to specify high-level configuration for a CockroachDB instance.
 
 While using these Jsonnet files alone is fine, we can use them as foundation to build an Operator on top of it. The [Locutus](https://github.com/brancz/locutus) project, which used by the Operator as a library, makes use of Jsonnet to template all Kubernetes objects every time as Custom Resource Definition (CRD), in our case a CockroachDB, changes. Before and after these objects are generated we can hook into the [actions](https://github.com/metalmatze/kube-cockroachdb/tree/master/operator/actions) the Operator performs and run more specific things like [initializing](https://github.com/metalmatze/kube-cockroachdb/blob/master/operator/actions/initialize.go), [decommissioning](https://github.com/metalmatze/kube-cockroachdb/blob/master/operator/actions/decommission.go) and [recommissioning](https://github.com/metalmatze/kube-cockroachdb/blob/master/operator/actions/recommission.go) of nodes.
@@ -77,7 +77,7 @@ spec:
 
 ## Monitoring
 
-By default a *Service Monitor* Custom Resource for the [Prometheus Operator](https://github.com/coreos/prometheus-operator) is generated. This gives an out-of-the-box monitoring experience when running a Prometheus Operator on the same cluster. 
+By default a *Service Monitor* Custom Resource for the [Prometheus Operator](https://github.com/coreos/prometheus-operator) is generated. This gives an out-of-the-box monitoring experience when running a Prometheus Operator on the same cluster.
 This project tries its best to be compatible with the [kube-prometheus](https://github.com/coreos/kube-prometheus/) project. Once you have setup monitoring with kube-prometheus its Prometheus is going to automatically start scraping the deployed CockroachDB instances.
 
 ### Prometheus Alerting and Recording Rules & Grafana Dashboards
@@ -97,7 +97,7 @@ For a start we want to add a Kubernetes CronJob that is configured to create a S
 
 The Operator comes as a pre-build container images: [quay.io/metalmatze/kube-cockroachdb](https://quay.io/metalmatze/kube-cockroachdb).
 
-The `operator/deployment/` contains a file that you can use to the deploy an instance of the Operator to deploy it to the `cockroachdb` namespace in your cluster. It'll start watching all `CockroachDB` Custom Resource Definitions (CRDs) in all namespaces by default. 
+The `operator/deployment/` contains a file that you can use to the deploy an instance of the Operator to deploy it to the `cockroachdb` namespace in your cluster. It'll start watching all `CockroachDB` Custom Resource Definitions (CRDs) in all namespaces by default.
 
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/metalmatze/kube-cockroachdb/master/operator/deployment/deployment.yaml
@@ -115,7 +115,7 @@ The easiest way to try this, is by running a cluster with the CockroachDB Operat
 
 ```bash
 kubectl scale cockroachdbs basic --replicas 5 # scaling up from 3
-kubectl scale cockroachdbs basic --replicas 3 # scaling down from 3 (decommission of pod 3 and 4)
+kubectl scale cockroachdbs basic --replicas 3 # scaling down from 5 (decommission of pod 3 and 4)
 kubectl scale cockroachdbs basic --replicas 5 # scaling up from 3 (recommission of pod 3 and 4, due earlier decommission)
 ```
 
