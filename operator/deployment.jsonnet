@@ -47,12 +47,14 @@ local objects = {
     kind: 'ClusterRole',
     metadata: $.metadata,
     rules: [
-      { apiGroups: ['metalmatze.de'], resources: ['cockroachdbs'], verbs: ['list', 'watch', 'patch'] },
-      { apiGroups: ['metalmatze.de'], resources: ['cockroachdbs/status'], verbs: ['update'] },
-      { apiGroups: [''], resources: ['services'], verbs: ['list', 'watch'] },
+      { apiGroups: ['metalmatze.de'], resources: ['cockroachdbs'], verbs: ['create', 'delete', 'get', 'list', 'patch', 'update', 'watch'] },
+      { apiGroups: ['metalmatze.de'], resources: ['cockroachdbs/status'], verbs: ['get', 'patch', 'update'] },
+      { apiGroups: [''], resources: ['services'], verbs: ['list', 'watch', 'get', 'create', 'update'] },
+      { apiGroups: [''], resources: ['pods'], verbs: ['get'] },
+      { apiGroups: [''], resources: ['pods/exec'], verbs: ['create'] },
       { apiGroups: ['apps'], resources: ['statefulsets'], verbs: ['list', 'watch', 'get', 'create', 'update'] },
       { apiGroups: ['policy'], resources: ['poddisruptionbudgets'], verbs: ['list', 'watch'] },
-      { apiGroups: ['monitoring.coreos.com'], resources: ['servicemonitors'], verbs: ['list', 'watch'] },
+      { apiGroups: ['monitoring.coreos.com'], resources: ['servicemonitors'], verbs: ['list', 'watch', 'get', 'create', 'update'] },
     ],
   },
   clusterRoleBinding: {

@@ -14,14 +14,20 @@ items:
     resources:
     - cockroachdbs
     verbs:
+    - create
+    - delete
+    - get
     - list
-    - watch
     - patch
+    - update
+    - watch
   - apiGroups:
     - metalmatze.de
     resources:
     - cockroachdbs/status
     verbs:
+    - get
+    - patch
     - update
   - apiGroups:
     - ""
@@ -30,6 +36,21 @@ items:
     verbs:
     - list
     - watch
+    - get
+    - create
+    - update
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    verbs:
+    - get
+  - apiGroups:
+    - ""
+    resources:
+    - pods/exec
+    verbs:
+    - create
   - apiGroups:
     - apps
     resources:
@@ -54,6 +75,9 @@ items:
     verbs:
     - list
     - watch
+    - get
+    - create
+    - update
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: ClusterRoleBinding
   metadata:
