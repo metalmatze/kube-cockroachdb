@@ -1,9 +1,12 @@
 # Kube-CockroachDB
-[![Docker Repository on Quay](https://quay.io/repository/metalmatze/kube-cockroachdb/status "Docker Repository on Quay")](https://quay.io/repository/metalmatze/kube-cockroachdb) [![Build Status](https://cloud.drone.io/api/badges/metalmatze/kube-cockroachdb/status.svg)](https://cloud.drone.io/metalmatze/kube-cockroachdb)
+[![Build Status](https://cloud.drone.io/api/badges/metalmatze/kube-cockroachdb/status.svg)](https://cloud.drone.io/metalmatze/kube-cockroachdb)[![Go Report Card](https://goreportcard.com/badge/github.com/metalmatze/kube-cockroachdb)](https://goreportcard.com/report/github.com/metalmatze/kube-cockroachdb)
 
 Deploy [CockroachDB](https://www.cockroachlabs.com/product/) on [Kubernetes](https://kubernetes.io/) using [YAML](https://yaml.org/) or an [Operator](https://coreos.com/blog/introducing-operators.html).
 
+![](screenshot.png)
+
 <!--ts-->
+
    * [Kube-CockroachDB](#kube-cockroachdb)
       * [YAML with Jsonnet &amp; CockroachDB Operator](#yaml-with-jsonnet--cockroachdb-operator)
          * [Jsonnet Example](#jsonnet-example)
