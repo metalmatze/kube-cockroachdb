@@ -90,6 +90,10 @@ local config = import 'generic-operator/config';
               object: 'serviceMonitor',
             },
             {
+              action: 'CreateOrUpdate',
+              object: 'prometheusRule',
+            },
+            {
               action: 'InitializeIfNot',
               object: 'statefulSet',
             },
