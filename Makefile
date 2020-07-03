@@ -38,8 +38,8 @@ PHONY: .tags
 .tags:
 	 echo "latest,$(shell git rev-parse --short HEAD)" > .tags
 
-monitoring/examples/prometheus.yaml: $(shell find monitoring/ -type f -and -name "*.jsonnet" -or -name "*.libsonnet")
-	jsonnet monitoring/examples.jsonnet | gojsontoyaml > monitoring/examples/prometheus.yaml
+monitoring/examples/prometheus.yaml: $(shell find monitoring/ -type f -and -name "*.jsonnet" -or -name "*.libsonnet") | .bingo/bin/jsonnet .bingo/bin/gojsontoyaml
+	.bingo/bin/jsonnet monitoring/examples.jsonnet | .bingo/bin/gojsontoyaml > monitoring/examples/prometheus.yaml
 
 .bingo/bin/gh-md-toc:
 	curl -Lo $@ https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
