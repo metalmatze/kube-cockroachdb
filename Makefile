@@ -34,13 +34,16 @@ README.md: $(shell find examples/ -name "*.jsonnet") | .bingo/bin/embedmd .bingo
 	.bingo/bin/gh-md-toc --insert README.md > /dev/null
 	-rm -rf README.md.{orig,toc}.*
 
-.bingo/bin/gh-md-toc:
-	curl -Lo $@ https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
-	chmod +x $@
-
 PHONY: .tags
 .tags:
 	 echo "latest,$(shell git rev-parse --short HEAD)" > .tags
+
+monitoring/examples/prometheus.yaml: $(shell find monitoring/ -type f -and -name "*.jsonnet" -or -name "*.libsonnet")
+	jsonnet monitoring/examples.jsonnet | gojsontoyaml > monitoring/examples/prometheus.yaml
+
+.bingo/bin/gh-md-toc:
+	curl -Lo $@ https://raw.githubusercontent.com/ekalinin/github-markdown-toc/master/gh-md-toc
+	chmod +x $@
 
 .bingo/bin/controller-gen:
 	go build -modfile .bingo/controller-gen.mod -o .bingo/bin/controller-gen sigs.k8s.io/controller-tools/cmd/controller-gen
