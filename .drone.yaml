@@ -22,6 +22,7 @@ steps:
       - make test
       - make .tags
       - cp ./kubernetes.libsonnet ./operator/kubernetes.libsonnet
+      - cp -r ./monitoring ./operator/monitoring/
     when:
       event:
         - push

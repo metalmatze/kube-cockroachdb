@@ -253,5 +253,30 @@ function(params) {
     },
   },
 
+  prometheusRule: {
+    local monitoring = (import './monitoring/mixin.libsonnet') + {
+      _config+:: {
+        cockroachdbSelector: 'namespace="%s",service="%s"' % [
+          cockroachdb.metadata.namespace,
+          cockroachdb.metadata.name,
+        ],
+      },
+    },
+
+    apiVersion: 'monitoring.coreos.com/v1',
+    kind: 'PrometheusRule',
+    metadata: cockroachdb.metadata {
+      labels+: {
+        prometheus: 'k8s',
+        role: 'alert-rules',
+      },
+    },
+    spec: {
+      groups:
+        monitoring.prometheusAlerts.groups +
+        monitoring.prometheusRules.groups,
+    },
+  },
+
   // TODO: Add backups to object storage via CronJob and Minio
 }

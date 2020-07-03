@@ -54,7 +54,7 @@ local objects = {
       { apiGroups: [''], resources: ['pods/exec'], verbs: ['create'] },
       { apiGroups: ['apps'], resources: ['statefulsets'], verbs: ['list', 'watch', 'get', 'create', 'update'] },
       { apiGroups: ['policy'], resources: ['poddisruptionbudgets'], verbs: ['list', 'watch'] },
-      { apiGroups: ['monitoring.coreos.com'], resources: ['servicemonitors'], verbs: ['list', 'watch', 'get', 'create', 'update'] },
+      { apiGroups: ['monitoring.coreos.com'], resources: ['servicemonitors', 'prometheusrules'], verbs: ['list', 'watch', 'get', 'create', 'update'] },
     ],
   },
   clusterRoleBinding: {

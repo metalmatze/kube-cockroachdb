@@ -43,3 +43,11 @@ resources:
         regex: '(.*)\/cockroachdb-(.*)'
       - regex: '(.*)\/cockroachdb-(.*)'
         replacement: "$1/$2"
+  - name: prometheusRule
+    kind: PrometheusRule
+    apiVersion: monitoring.coreos.com/v1
+    keyTransformations:
+      - action: keep
+        regex: '(.*)\/cockroachdb-(.*)'
+      - regex: '(.*)\/cockroachdb-(.*)'
+        replacement: "$1/$2"
