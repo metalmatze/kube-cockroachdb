@@ -44,3 +44,25 @@ steps:
       event:
         - push
         - tag
+---
+kind: pipeline
+name: monitoring
+
+platform:
+  os: linux
+  arch: amd64
+
+workspace:
+  base: /go
+  path: src/github.com/metalmatze/kube-cockroachdb
+
+steps:
+  - name: build
+    pull: always
+    image: golang:1.14-alpine
+    environment:
+      GOPROXY: https://proxy.golang.org
+    commands:
+      - apk add -U git jsonnet make
+      - make monitoring/examples/prometheus.yaml --always-make
+      - git diff --exit-code
