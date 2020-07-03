@@ -160,9 +160,7 @@ items:
         - command:
           - /bin/bash
           - -ecx
-          - exec /cockroach/cockroach start --logtostderr=WARNING --insecure --advertise-host=$(hostname
-            -f) --http-host=0.0.0.0 --join=cockroachdb-example-0.cockroachdb-example.default.svc
-            --cache=25% --max-sql-memory=25%
+          - exec /cockroach/cockroach start --logtostderr=WARNING --insecure --advertise-host=$(hostname -f) --http-host=0.0.0.0 --join=cockroachdb-example-0.cockroachdb-example.default.svc --cache=25% --max-sql-memory=25%
           env:
           - name: COCKROACH_CHANNEL
             value: kubernetes-insecure
