@@ -1,0 +1,22 @@
+apiVersion: metalmatze.de/v1alpha1
+kind: CockroachDB
+metadata:
+  name: basic
+  namespace: default
+  labels:
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: basic
+spec:
+  replicas: 3
+  image: cockroachdb/cockroach:v20.1.5
+  storage:
+    volumeClaimTemplate:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: standard
