@@ -22,6 +22,7 @@ local config = import 'generic-operator/config';
       metadata+: {
         namespace: config.metadata.namespace,
       },
+      image: config.spec.image,
       replicas: config.spec.replicas,
       resources: if std.objectHas(config.spec, 'resources') then config.spec.resources else {},
       pvc: {
