@@ -19,15 +19,15 @@ operator/deployment.yaml: operator/deployment.jsonnet
 	.bingo/bin/jsonnetfmt -i operator/deployment.jsonnet
 	.bingo/bin/jsonnet operator/deployment.jsonnet | .bingo/bin/gojsontoyaml > operator/deployment.yaml
 
-examples: examples/basic/basic.yaml examples/pvc/pvc.yaml
+examples: examples/basic/basic.yaml examples/storage/storage.yaml
 
 examples/basic/basic.yaml: examples/basic/basic.jsonnet kubernetes.libsonnet | .bingo/bin/jsonnet .bingo/bin/jsonnetfmt .bingo/bin/gojsontoyaml
 	.bingo/bin/jsonnetfmt -i kubernetes.libsonnet examples/basic/basic.jsonnet
 	.bingo/bin/jsonnet examples/basic/basic.jsonnet | .bingo/bin/gojsontoyaml > examples/basic/basic.yaml
 
-examples/pvc/pvc.yaml: examples/pvc/pvc.jsonnet kubernetes.libsonnet | .bingo/bin/jsonnet .bingo/bin/jsonnetfmt .bingo/bin/gojsontoyaml
-	.bingo/bin/jsonnetfmt -i kubernetes.libsonnet examples/pvc/pvc.jsonnet
-	.bingo/bin/jsonnet examples/pvc/pvc.jsonnet | .bingo/bin/gojsontoyaml > examples/pvc/pvc.yaml
+examples/storage/storage.yaml: examples/storage/storage.jsonnet kubernetes.libsonnet | .bingo/bin/jsonnet .bingo/bin/jsonnetfmt .bingo/bin/gojsontoyaml
+	.bingo/bin/jsonnetfmt -i kubernetes.libsonnet examples/storage/storage.jsonnet
+	.bingo/bin/jsonnet examples/storage/storage.jsonnet | .bingo/bin/gojsontoyaml > examples/storage/storage.yaml
 
 README.md: $(shell find examples/ -name "*.jsonnet") | .bingo/bin/embedmd .bingo/bin/gh-md-toc
 	.bingo/bin/embedmd -w README.md

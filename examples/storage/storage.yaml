@@ -197,7 +197,9 @@ items:
           persistentVolumeClaim:
             claimName: datadir
     volumeClaimTemplates:
-    - metadata:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
         name: datadir
         namespace: default
       spec:
@@ -205,6 +207,6 @@ items:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 5Gi
+            storage: 25Gi
         storageClassName: standard
 kind: List
