@@ -13,13 +13,14 @@ function(params) {
           'app.kubernetes.io/component': 'database',
         },
       },
-      image: 'cockroachdb/cockroach:v20.1.0',
+      image: 'cockroachdb/cockroach:v20.1.5',
       replicas: 1,
       expose: {
         http: 8080,
         grpc: 26257,
       },
       resources: {},
+      storage: {},
     }
     + params,  // this merges your parameters with default ones
 

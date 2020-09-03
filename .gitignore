@@ -1,3 +1,4 @@
-/operator/operator
 /.tags
+/operator/kubernetes.libsonnet
+/operator/operator
 /tmp

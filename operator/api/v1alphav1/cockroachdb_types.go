@@ -20,6 +20,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+func init() {
+	SchemeBuilder.Register(&CockroachDB{}, &CockroachDBList{})
+}
+
 // CockroachDBList contains a list of CockroachDB
 // +kubebuilder:object:root=true
 type CockroachDBList struct {
@@ -117,7 +121,3 @@ type EmbeddedObjectMetadata struct {
 }
 
 type CockroachDBStatus struct{}
-
-func init() {
-	SchemeBuilder.Register(&CockroachDB{}, &CockroachDBList{})
-}

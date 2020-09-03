@@ -6,7 +6,6 @@ Deploy [CockroachDB](https://www.cockroachlabs.com/product/) on [Kubernetes](htt
 ![](screenshot.png)
 
 <!--ts-->
-
    * [Kube-CockroachDB](#kube-cockroachdb)
       * [YAML with Jsonnet &amp; CockroachDB Operator](#yaml-with-jsonnet--cockroachdb-operator)
          * [Jsonnet Example](#jsonnet-example)
@@ -75,7 +74,7 @@ metadata:
     app.kubernetes.io/instance: basic
 spec:
   replicas: 3
-  image: cockroachdb/cockroach:v20.1.0
+  image: cockroachdb/cockroach:v20.1.5
 ```
 
 ## Monitoring

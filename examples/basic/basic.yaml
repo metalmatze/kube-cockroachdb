@@ -23,7 +23,7 @@ items:
           - init
           - --insecure
           - --host=cockroachdb-example-0.cockroachdb-example.default
-          image: cockroachdb/cockroach:v20.1.0
+          image: cockroachdb/cockroach:v20.1.5
           name: cluster-init
         restartPolicy: OnFailure
 - apiVersion: policy/v1beta1
@@ -164,7 +164,7 @@ items:
           env:
           - name: COCKROACH_CHANNEL
             value: kubernetes-insecure
-          image: cockroachdb/cockroach:v20.1.0
+          image: cockroachdb/cockroach:v20.1.5
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
