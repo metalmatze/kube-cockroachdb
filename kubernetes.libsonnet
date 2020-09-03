@@ -152,23 +152,18 @@ function(params) {
               ],
             },
           },
-          volumes: if std.objectHas(cockroachdb, 'pvc') then [
+          volumes: if std.objectHas(cockroachdb.storage, 'volumeClaimTemplate') then [
             { name: 'datadir', persistentVolumeClaim: { claimName: 'datadir' } },
           ] else [
             { name: 'datadir', emptyDir: {} },
           ],
         },
       },
-      volumeClaimTemplates: if std.objectHas(cockroachdb, 'pvc') then [
-        {
-          metadata: {
+      volumeClaimTemplates: if std.objectHas(cockroachdb.storage, 'volumeClaimTemplate') then [
+        cockroachdb.storage.volumeClaimTemplate {
+          metadata+: {
             name: 'datadir',
             namespace: cockroachdb.metadata.namespace,
-          },
-          spec: {
-            accessModes: ['ReadWriteOnce'],
-            resources: { requests: { storage: cockroachdb.pvc.size } },
-            storageClassName: cockroachdb.pvc.class,
           },
         },
       ] else [],

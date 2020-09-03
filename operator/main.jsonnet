@@ -25,10 +25,7 @@ local config = import 'generic-operator/config';
       image: config.spec.image,
       replicas: config.spec.replicas,
       resources: if std.objectHas(config.spec, 'resources') then config.spec.resources else {},
-      pvc: {
-        size: '1Gi',
-        class: 'standard',
-      },
+      storage: if std.objectHas(config.spec, 'storage') then config.spec.storage else {},
     })
   ),
   rollout: {
