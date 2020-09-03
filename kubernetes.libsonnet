@@ -21,6 +21,13 @@ function(params) {
       },
       resources: {},
       storage: {},
+      serviceMonitor+: {
+        metadata+: cockroachdb.metadata {
+          labels+: {
+            prometheus: 'k8s',
+          },
+        },
+      },
     }
     + params,  // this merges your parameters with default ones
 
@@ -220,11 +227,7 @@ function(params) {
   serviceMonitor: {
     apiVersion: 'monitoring.coreos.com/v1',
     kind: 'ServiceMonitor',
-    metadata: cockroachdb.metadata {
-      labels+: {
-        prometheus: 'k8s',
-      },
-    },
+    metadata: cockroachdb.metadata + cockroachdb.serviceMonitor.metadata,
     spec: {
       endpoints: [
         {
