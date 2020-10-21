@@ -99,6 +99,9 @@ function(params) {
                 '-ecx',
                 'exec /cockroach/cockroach %s' % std.join(' ', self.args),
               ],
+              securityContext: {
+                runAsUser: 65534,
+              },
               env: [
                 {
                   name: 'COCKROACH_CHANNEL',
