@@ -19,6 +19,12 @@ operator/deployment.yaml: operator/deployment.jsonnet
 	.bingo/bin/jsonnetfmt -i operator/deployment.jsonnet
 	.bingo/bin/jsonnet operator/deployment.jsonnet | .bingo/bin/gojsontoyaml > operator/deployment.yaml
 
+.PHONY: container
+container:
+	cp ./kubernetes.libsonnet ./operator/kubernetes.libsonnet
+	cp -r monitoring/* operator
+	cd operator && docker build -t quay.io/metalmatze/kube-cockroachdb .
+
 examples: examples/basic/basic.yaml examples/storage/storage.yaml
 
 examples/basic/basic.yaml: examples/basic/basic.jsonnet kubernetes.libsonnet | .bingo/bin/jsonnet .bingo/bin/jsonnetfmt .bingo/bin/gojsontoyaml

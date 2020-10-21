@@ -58,6 +58,9 @@ type CockroachDBSpec struct {
 
 	// Storage spec to specify how storage shall be used.
 	Storage *StorageSpec `json:"storage,omitempty"`
+
+	// ServiceMonitor allows overwriting some metadata labels.
+	ServiceMonitor *ServiceMonitorSpec `json:"serviceMonitor,omitempty"`
 }
 
 // Storage parts are taken from the Prometheus Operator:
@@ -121,3 +124,8 @@ type EmbeddedObjectMetadata struct {
 }
 
 type CockroachDBStatus struct{}
+
+type ServiceMonitorSpec struct {
+	// EmbeddedMetadata contains metadata relevant to an EmbeddedResource.
+	EmbeddedObjectMetadata `json:"metadata,omitempty" protobuf:"bytes,1,opt,name=metadata"`
+}
