@@ -14,8 +14,8 @@ operator/operator: $(shell find ./operator -type f -name '*.go')
 operator/metalmatze.de_cockroachdbs.yaml: $(shell find ./operator/api/v1alphav1 -type f -name '*.go') | $(CONTROLLER_GEN)
 	$(CONTROLLER_GEN) crd paths="./operator/..." output:crd:artifacts:config=./operator
 
-operator/api/v1alphav1/zz_generated.deepcopy.go: $(shell find ./operator/api/v1alphav1 -type f -name '*.go' -not -name '*.deepcopy.go') | operator/metalmatze.de_cockroachdbs.yaml
-	operator/metalmatze.de_cockroachdbs.yaml object paths="./operator/..."
+operator/api/v1alphav1/zz_generated.deepcopy.go: $(shell find ./operator/api/v1alphav1 -type f -name '*.go' -not -name '*.deepcopy.go') | $(CONTROLLER_GEN)
+	$(CONTROLLER_GEN) object paths="./operator/..."
 
 operator/deployment.yaml: operator/deployment.jsonnet
 	$(JSONNETFMT) -i operator/deployment.jsonnet
