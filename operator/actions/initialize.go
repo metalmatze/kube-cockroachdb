@@ -143,27 +143,72 @@ func parseStatus(stdout string) ([]NodeStatus, error) {
 
 	stdout = strings.TrimSpace(stdout)
 	lines := strings.Split(stdout, "\n")
-	for _, line := range lines {
-		columns := strings.Split(line, "\t")
-		if len(columns) != 22 {
-			return status, fmt.Errorf("parsing status failed as 22 columns expected but got: %d", len(columns))
-		}
-		if columns[0] == "id" {
-			continue
-		}
 
-		id, err := strconv.ParseInt(columns[0], 10, 64)
+	idColumnIndex := -1
+	addressColumnIndex := -1
+	isAvailableColumnIndex := -1
+	isLiveColumnIndex := -1
+	isDecommissioningColumnIndex := -1
+	isDrainingColumnIndex := -1
+
+	headerLine := lines[0]
+	columns := strings.Split(headerLine, "\t")
+	for i, column := range columns {
+		switch column {
+		case "id":
+			idColumnIndex = i
+		case "address":
+			addressColumnIndex = i
+		case "is_available":
+			isAvailableColumnIndex = i
+		case "is_live":
+			isLiveColumnIndex = i
+		case "is_decommissioning":
+			isDecommissioningColumnIndex = i
+		case "is_draining":
+			isDrainingColumnIndex = i
+		}
+	}
+
+	if idColumnIndex == -1 {
+		return nil, fmt.Errorf("failed to find id column in status output")
+	}
+
+	if addressColumnIndex == -1 {
+		return nil, fmt.Errorf("failed to find address column in status output")
+	}
+
+	if isAvailableColumnIndex == -1 {
+		return nil, fmt.Errorf("failed to find is_available column in status output")
+	}
+
+	if isLiveColumnIndex == -1 {
+		return nil, fmt.Errorf("failed to find is_live column in status output")
+	}
+
+	if isDecommissioningColumnIndex == -1 {
+		return nil, fmt.Errorf("failed to find is_decommissioning column in status output")
+	}
+
+	if isDrainingColumnIndex == -1 {
+		return nil, fmt.Errorf("failed to find is_draining column in status output")
+	}
+
+	// Exclude the header line.
+	for _, line := range lines[1:] {
+		columns := strings.Split(line, "\t")
+		id, err := strconv.ParseInt(columns[idColumnIndex], 10, 64)
 		if err != nil {
 			return status, err
 		}
 
 		status = append(status, NodeStatus{
 			ID:              id,
-			Address:         columns[1],
-			Available:       parseBool(columns[7]),
-			Live:            parseBool(columns[8]),
-			Decommissioning: parseBool(columns[20]),
-			Draining:        parseBool(columns[21]),
+			Address:         columns[addressColumnIndex],
+			Available:       parseBool(columns[isAvailableColumnIndex]),
+			Live:            parseBool(columns[isLiveColumnIndex]),
+			Decommissioning: parseBool(columns[isDecommissioningColumnIndex]),
+			Draining:        parseBool(columns[isDrainingColumnIndex]),
 		})
 	}
 
