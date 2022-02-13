@@ -76,7 +76,7 @@ func (a *DecommissionNodeAction) Execute(rc *client.ResourceClient, u *unstructu
 		return nil
 	}
 
-	command := []string{"cockroach", "node", "decommission", "--insecure"}
+	command := []string{"cockroach", "node", "decommission", "--insecure", "--self"}
 	for _, id := range decommissionIDs {
 		command = append(command, fmt.Sprintf("%d", id))
 	}

@@ -59,7 +59,7 @@ func (a *RecommissionNodeAction) Execute(rc *client.ResourceClient, u *unstructu
 
 	start := time.Now()
 
-	command := []string{"cockroach", "node", "recommission", "--insecure"}
+	command := []string{"cockroach", "node", "recommission", "--insecure", "--self"}
 	level.Debug(a.Logger).Log("msg", "recommissioning nodes", "command", strings.Join(command, " "))
 	for _, id := range recommissionIDs {
 		command = append(command, fmt.Sprintf("%d", id))
