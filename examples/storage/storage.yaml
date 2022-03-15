@@ -188,6 +188,8 @@ items:
             initialDelaySeconds: 10
             periodSeconds: 5
           resources: {}
+          securityContext:
+            runAsUser: 65534
           volumeMounts:
           - mountPath: /cockroach/cockroach-data
             name: datadir
