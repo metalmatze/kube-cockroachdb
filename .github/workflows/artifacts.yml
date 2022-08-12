@@ -2,6 +2,8 @@ name: Artifacts
 
 on:
   push:
+    tags:
+    - '*'
     branches:
     - main
     - release-*
@@ -19,13 +21,16 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
-      contents: read
+      contents: write
+      issues: write
     steps:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3.0.2
+        with:
+          fetch-depth: 0
 
-      - name: Unshallow
-        run: git fetch --prune --unshallow
+      - name: Fetch all tags
+        run: git fetch --force --tags
 
       - name: Set up Go
         uses: actions/setup-go@v3.2.1
