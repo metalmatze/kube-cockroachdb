@@ -28,7 +28,7 @@ Deploy [CockroachDB](https://www.cockroachlabs.com/product/) on [Kubernetes](htt
 The main focus of this project is to generate all necessary Kubernetes files, like StatefulSets, Services, CronJobs, and more with [Jsonnet](https://jsonnet.org).
 The idea is to build an abstraction layer on top of the Kubernetes objects, which allows to specify high-level configuration for a CockroachDB instance.
 
-While using these Jsonnet files alone is fine, we can use them as foundation to build an Operator on top of it. The [Locutus](https://github.com/brancz/locutus) project, which used by the Operator as a library, makes use of Jsonnet to template all Kubernetes objects every time as Custom Resource Definition (CRD), in our case a CockroachDB, changes. Before and after these objects are generated we can hook into the [actions](https://github.com/metalmatze/kube-cockroachdb/tree/master/operator/actions) the Operator performs and run more specific things like [initializing](https://github.com/metalmatze/kube-cockroachdb/blob/master/operator/actions/initialize.go), [decommissioning](https://github.com/metalmatze/kube-cockroachdb/blob/master/operator/actions/decommission.go) and [recommissioning](https://github.com/metalmatze/kube-cockroachdb/blob/master/operator/actions/recommission.go) of nodes.
+While using these Jsonnet files alone is fine, we can use them as foundation to build an Operator on top of it. The [Locutus](https://github.com/brancz/locutus) project, which used by the Operator as a library, makes use of Jsonnet to template all Kubernetes objects every time as Custom Resource Definition (CRD), in our case a CockroachDB, changes. Before and after these objects are generated we can hook into the [actions](https://github.com/metalmatze/kube-cockroachdb/tree/main/operator/actions) the Operator performs and run more specific things like [initializing](https://github.com/metalmatze/kube-cockroachdb/blob/main/operator/actions/initialize.go), [decommissioning](https://github.com/metalmatze/kube-cockroachdb/blob/main/operator/actions/decommission.go) and [recommissioning](https://github.com/metalmatze/kube-cockroachdb/blob/main/operator/actions/recommission.go) of nodes.
 That way we can make use of Jsonnet for templating and use Go for really specific actions we need to perform on the CockroachDB cluster.
 
 ### Jsonnet Example
@@ -103,15 +103,15 @@ The `operator/deployment/` contains a file that you can use to the deploy an ins
 
 ```bash
 # Operator currently depends on the ServiceMonitor CRD
-kubectl apply -f https://raw.githubusercontent.com/coreos/kube-prometheus/master/manifests/setup/prometheus-operator-0servicemonitorCustomResourceDefinition.yaml
+kubectl apply -f https://raw.githubusercontent.com/coreos/kube-prometheus/main/manifests/setup/prometheus-operator-0servicemonitorCustomResourceDefinition.yaml
 # CockroachDB Custom Resource Definition
-kubectl apply -f https://raw.githubusercontent.com/metalmatze/kube-cockroachdb/master/operator/metalmatze.de_cockroachdbs.yaml
+kubectl apply -f https://raw.githubusercontent.com/metalmatze/kube-cockroachdb/main/operator/metalmatze.de_cockroachdbs.yaml
 # We'll deploy the operator to this namespace
 kubectl create namespace kube-cockroachdb
 # Deploy the actual operator
-kubectl apply -f https://raw.githubusercontent.com/metalmatze/kube-cockroachdb/master/operator/deployment.yaml
+kubectl apply -f https://raw.githubusercontent.com/metalmatze/kube-cockroachdb/main/operator/deployment.yaml
 # Optionally deploy a example instance
-kubectl apply -f https://raw.githubusercontent.com/metalmatze/kube-cockroachdb/master/operator/examples/basic.yaml
+kubectl apply -f https://raw.githubusercontent.com/metalmatze/kube-cockroachdb/main/operator/examples/basic.yaml
 ```
 
 *If you want an Operator deployment that's only able to read and write it's own namespace, please open an issue. I'm happy to add this upon request.*
@@ -130,7 +130,7 @@ kubectl scale cockroachdbs basic --replicas 3 # scaling down from 5 (decommissio
 kubectl scale cockroachdbs basic --replicas 5 # scaling up from 3 (recommission of pod 3 and 4, due earlier decommission)
 ```
 
-It means, that nodes that will be removed from the cluster due to scaling down, are going to "transfer all range replicas on the node to other nodes". Please read the official [Decommission Nodes](https://www.cockroachlabs.com/docs/stable/remove-nodes.html) documentation to learn more. The Operator is implemented to run `cockroach node decommission 3 4` against `pod-0` in the cluster: [operator/actions/decommission.go](https://github.com/metalmatze/kube-cockroachdb/blob/master/operator/actions/decommission.go). Only if the decommission command succeeds the StatefulSet is actually scaled down removing the Pods going forward.
+It means, that nodes that will be removed from the cluster due to scaling down, are going to "transfer all range replicas on the node to other nodes". Please read the official [Decommission Nodes](https://www.cockroachlabs.com/docs/stable/remove-nodes.html) documentation to learn more. The Operator is implemented to run `cockroach node decommission 3 4` against `pod-0` in the cluster: [operator/actions/decommission.go](https://github.com/metalmatze/kube-cockroachdb/blob/main/operator/actions/decommission.go). Only if the decommission command succeeds the StatefulSet is actually scaled down removing the Pods going forward.
 
 Similarly, once nodes have been decommissioned they need to be recommissioned to be used again, essentially telling the CockroachDB cluster to send range replicas to those nodes again. The Operator is implemented to run `cockroach node recommission 3 4` after scaling up a StatefulSet.
 
