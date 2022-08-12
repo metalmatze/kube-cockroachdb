@@ -1,0 +1,36 @@
+builds:
+- main: ./operator
+  goos:
+  - linux
+  goarch:
+  - amd64
+  - arm64
+  env:
+  - CGO_ENABLED=0
+dockers:
+- image_templates:
+  - "ghcr.io/metalmatze/kube-cockroachdb:{{ .Version }}-amd64"
+  use: buildx
+  dockerfile: Dockerfile.goreleaser
+  build_flag_templates:
+  - "--platform=linux/amd64"
+  extra_files:
+  - operator/config.yaml
+  - operator/main.jsonnet
+  - kubernetes.libsonnet
+- image_templates:
+  - "ghcr.io/metalmatze/kube-cockroachdb:{{ .Version }}-arm64"
+  use: buildx
+  goarch: arm64
+  dockerfile: Dockerfile.goreleaser
+  build_flag_templates:
+  - "--platform=linux/arm64/v8"
+  extra_files:
+  - operator/config.yaml
+  - operator/main.jsonnet
+  - kubernetes.libsonnet
+docker_manifests:
+- name_template: ghcr.io/metalmatze/kube-cockroachdb
+  image_templates:
+  - ghcr.io/metalmatze/kube-cockroachdb:{{ .Version }}-amd64
+  - ghcr.io/metalmatze/kube-cockroachdb:{{ .Version }}-arm64

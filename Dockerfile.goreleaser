@@ -1,0 +1,9 @@
+FROM alpine
+
+COPY kube-cockroachdb /kube-cockroachdb/operator
+COPY operator/config.yaml /kube-cockroachdb/config.yaml
+COPY operator/main.jsonnet /kube-cockroachdb/main.jsonnet
+COPY kubernetes.libsonnet /kube-cockroachdb/kubernetes.libsonnet
+
+WORKDIR /kube-cockroachdb
+ENTRYPOINT [ "/kube-cockroachdb/operator" ]

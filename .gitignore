@@ -2,3 +2,5 @@
 /operator/kubernetes.libsonnet
 /operator/operator
 /tmp
+
+dist/
