@@ -30,7 +30,7 @@ dockers:
   - operator/main.jsonnet
   - kubernetes.libsonnet
 docker_manifests:
-- name_template: ghcr.io/metalmatze/kube-cockroachdb
+- name_template: ghcr.io/metalmatze/kube-cockroachdb:{{ .Version }}
   image_templates:
   - ghcr.io/metalmatze/kube-cockroachdb:{{ .Version }}-amd64
   - ghcr.io/metalmatze/kube-cockroachdb:{{ .Version }}-arm64
