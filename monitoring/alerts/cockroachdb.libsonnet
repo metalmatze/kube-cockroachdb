@@ -14,7 +14,8 @@
               severity: 'warning',
             },
             annotations: {
-              message: '{{ $labels.instance }} for cluster {{ $labels.cluster }} restarted {{ $value }} time(s) in 10m',
+              summary: 'CockroachDB instances have restarted in the last 10 minutes.',
+              description: '{{ $labels.instance }} for cluster {{ $labels.cluster }} restarted {{ $value }} time(s) in 10m.',
             },
           },
           {
@@ -29,8 +30,8 @@
               severity: 'warning',
             },
             annotations: {
-              // TODO
-              message: 'Liveness mismatch for {{ $labels.instance }}',
+              summary: 'CockroachDB has liveness mismatches.',
+              description: 'Liveness mismatch for {{ $labels.instance }}',
             },
           },
           {
@@ -43,7 +44,8 @@
               severity: 'warning',
             },
             annotations: {
-              message: 'Cluster {{ $labels.cluster }} running {{ $value }} different versions',
+              summary: 'CockroachDB cluster is running different versions.',
+              description: 'Cluster {{ $labels.cluster }} running {{ $value }} different versions',
             },
           },
           {
@@ -57,7 +59,8 @@
               severity: 'critical',
             },
             annotations: {
-              message: 'Store {{ $labels.store }} on node {{ $labels.instance }} at {{ $value }} available disk fraction',
+              summary: 'CockroachDB is at low disk capacity.',
+              description: 'Store {{ $labels.store }} on node {{ $labels.instance }} at {{ $value }} available disk fraction',
             },
           },
           {
@@ -71,7 +74,8 @@
               severity: 'critical',
             },
             annotations: {
-              message: 'Cluster {{ $labels.cluster }} at {{ $value }} available disk fraction',
+              summary: 'CockroachDB cluster is at critically low disk capacity.',
+              description: 'Cluster {{ $labels.cluster }} at {{ $value }} available disk fraction',
             },
           },
           // {
@@ -97,7 +101,8 @@
               severity: 'critical',
             },
             annotations: {
-              message: 'Instance {{ $labels.instance }} has {{ $value }} unavailable ranges',
+              summary: 'CockroachDB has unavailable ranges.',
+              description: 'Instance {{ $labels.instance }} has {{ $value }} unavailable ranges',
             },
           },
           {
@@ -110,7 +115,8 @@
               severity: 'warning',
             },
             annotations: {
-              message: 'Instance {{ $labels.instance }} has {{ $value }} ranges without leases',
+              summary: 'CockroachDB has ranges without leases.',
+              description: 'Instance {{ $labels.instance }} has {{ $value }} ranges without leases',
             },
           },
           {
@@ -123,7 +129,8 @@
               severity: 'warning',
             },
             annotations: {
-              message: 'Too many open file descriptors on {{ $labels.instance }}: {{ $value }} fraction used',
+              summary: 'CockroachDB has too many open file descriptors.',
+              description: 'Too many open file descriptors on {{ $labels.instance }}: {{ $value }} fraction used',
             },
           },
         ],
