@@ -14,7 +14,7 @@ import (
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/client-go/deprecated/scheme"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/remotecommand"
@@ -30,8 +30,8 @@ func (a *InitializeCockroachDBAction) Name() string {
 	return "InitializeIfNot"
 }
 
-func (a *InitializeCockroachDBAction) Execute(rc *client.ResourceClient, u *unstructured.Unstructured) error {
-	obj, err := rc.Get(context.TODO(), u.GetName(), metav1.GetOptions{})
+func (a *InitializeCockroachDBAction) Execute(ctx context.Context, rc *client.ResourceClient, u *unstructured.Unstructured) error {
+	obj, err := rc.Get(ctx, u.GetName(), metav1.GetOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to get resource while initializing CockroachDB")
 	}
@@ -91,7 +91,7 @@ func podExec(konfig *rest.Config, klient *kubernetes.Clientset, namespace string
 		Command:   command,
 		Stdout:    true,
 		Stderr:    true,
-	}, scheme.ParameterCodec)
+	}, runtime.NewParameterCodec(runtime.NewScheme()))
 
 	exec, err := remotecommand.NewSPDYExecutor(konfig, "POST", req.URL())
 	if err != nil {

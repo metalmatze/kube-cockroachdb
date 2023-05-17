@@ -16,13 +16,14 @@ import (
 	"github.com/brancz/locutus/trigger/resource"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"github.com/metalmatze/kube-cockroachdb/operator/actions"
 	"github.com/metalmatze/signal/healthcheck"
 	"github.com/metalmatze/signal/internalserver"
 	"github.com/oklog/run"
 	"github.com/prometheus/client_golang/prometheus"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
+
+	"github.com/metalmatze/kube-cockroachdb/operator/actions"
 )
 
 func main() {
@@ -40,6 +41,7 @@ func main() {
 	flag.StringVar(&loggerLevel, "log.level", "info", "Change the verbosity of the logger (debug,info,warn,error)")
 	flag.Parse()
 
+	ctx := context.Background()
 	reg := prometheus.NewRegistry()
 	healthchecks := healthcheck.NewMetricsHandler(healthcheck.NewHandler(), reg)
 
@@ -78,7 +80,7 @@ func main() {
 			//client.UpdatePreparationFunc(client.PrepareStatefulsetForUpdate),
 		})
 
-		renderer := jsonnet.NewRenderer(logger, jsonnetPath)
+		renderer := jsonnet.NewRenderer(logger, jsonnetPath, map[string]func() ([]byte, error){})
 
 		c := checks.NewSuccessChecks(logger, cl)
 
@@ -91,7 +93,7 @@ func main() {
 			&actions.RecommissionNodeAction{Konfig: konfig, Klient: klient, Logger: logger},
 		})
 
-		trigger, err := resource.NewTrigger(logger, cl, triggerConfigPath)
+		trigger, err := resource.NewTrigger(ctx, logger, cl, triggerConfigPath, true)
 		if err != nil {
 			stdlog.Fatalf("error creating resource trigger: %v", err)
 		}
