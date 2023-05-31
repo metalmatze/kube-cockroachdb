@@ -14,7 +14,6 @@ import (
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/remotecommand"
@@ -74,7 +73,8 @@ func (a *InitializeCockroachDBAction) Execute(ctx context.Context, rc *client.Re
 }
 
 func podExec(konfig *rest.Config, klient *kubernetes.Clientset, namespace string, name string, command []string) (*bytes.Buffer, *bytes.Buffer, error) {
-	pod, err := klient.CoreV1().Pods(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	ctx := context.TODO()
+	pod, err := klient.CoreV1().Pods(namespace).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		return nil, nil, err
 	}
@@ -89,18 +89,21 @@ func podExec(konfig *rest.Config, klient *kubernetes.Clientset, namespace string
 	req.VersionedParams(&v1.PodExecOptions{
 		Container: pod.Spec.Containers[0].Name,
 		Command:   command,
+		Stdin:     true,
 		Stdout:    true,
 		Stderr:    true,
-	}, runtime.NewParameterCodec(runtime.NewScheme()))
+	}, metav1.ParameterCodec)
 
 	exec, err := remotecommand.NewSPDYExecutor(konfig, "POST", req.URL())
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create executor: %w", err)
 	}
 
+	stdin := &bytes.Buffer{}
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
-	err = exec.Stream(remotecommand.StreamOptions{
+	err = exec.StreamWithContext(ctx, remotecommand.StreamOptions{
+		Stdin:  stdin,
 		Stdout: stdout,
 		Stderr: stderr,
 		Tty:    false,
