@@ -27,8 +27,8 @@ func (a *DecommissionNodeAction) Name() string {
 	return "DecommissionNode"
 }
 
-func (a *DecommissionNodeAction) Execute(rc *client.ResourceClient, u *unstructured.Unstructured) error {
-	obj, err := rc.Get(context.TODO(), u.GetName(), metav1.GetOptions{})
+func (a *DecommissionNodeAction) Execute(ctx context.Context, rc *client.ResourceClient, u *unstructured.Unstructured) error {
+	obj, err := rc.Get(ctx, u.GetName(), metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
 		// There's no statefulset yet (during rollout),
 		// so we don't need to check for decommissioning any pods.

@@ -48,30 +48,35 @@ local config = import 'generic-operator/config';
               object: 'statefulSet',
               success: [
                 {
-                  fieldComparisons: [
-                    {
-                      name: 'Generation correct',
-                      path: '{.metadata.generation}',
-                      value: {
-                        path: '{.status.observedGeneration}',
+                  fieldComparisons: {
+                    timeout: '10s',
+                    progressTimeout: '1m',
+                    pollInterval: '15s',
+                    expectedValues: [
+                      {
+                        name: 'Generation correct',
+                        path: '{.metadata.generation}',
+                        value: {
+                          path: '{.status.observedGeneration}',
+                        },
                       },
-                    },
-                    {
-                      name: 'All replicas updated',
-                      path: '{.status.replicas}',
-                      value: {
-                        path: '{.status.updatedReplicas}',
+                      {
+                        name: 'All replicas updated',
+                        path: '{.status.replicas}',
+                        value: {
+                          path: '{.status.updatedReplicas}',
+                        },
                       },
-                    },
-                    {
-                      name: 'No replica unavailable',
-                      path: '{.status.unavailableReplicas}',
-                      default: 0,
-                      value: {
-                        static: 0,
+                      {
+                        name: 'No replica unavailable',
+                        path: '{.status.unavailableReplicas}',
+                        default: 0,
+                        value: {
+                          static: 0,
+                        },
                       },
-                    },
-                  ],
+                    ],
+                  },
                 },
               ],
             },

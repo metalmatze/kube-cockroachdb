@@ -80,6 +80,7 @@ function(params) {
               name: 'cockroachdb',
               image: cockroachdb.image,
               imagePullPolicy: 'IfNotPresent',
+              podManagementPolicy: 'Parallel',
               args:: [
                 'start',
                 '--logtostderr=WARNING',
@@ -101,6 +102,15 @@ function(params) {
               ],
               securityContext: {
                 runAsUser: 65534,
+                runAsGroup: 65534,
+                runAsNonRoot: true,
+                allowPrivilegeEscalation: false,
+                seccompProfile: {
+                  type: 'RuntimeDefault',
+                },
+                capabilities: {
+                  drop: ['ALL'],
+                },
               },
               env: [
                 {
@@ -169,12 +179,15 @@ function(params) {
             name: 'datadir',
             namespace: cockroachdb.metadata.namespace,
           },
+          spec+:{
+            accessModes: ['ReadWriteOnce'],
+          },
         },
       ] else [],
     },
   },
   podDisruptionBudget: {
-    apiVersion: 'policy/v1beta1',
+    apiVersion: 'policy/v1',
     kind: 'PodDisruptionBudget',
     metadata: cockroachdb.metadata,
     spec: {

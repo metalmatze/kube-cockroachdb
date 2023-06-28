@@ -14,8 +14,8 @@ import (
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/client-go/deprecated/scheme"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/remotecommand"
 )
@@ -30,8 +30,8 @@ func (a *InitializeCockroachDBAction) Name() string {
 	return "InitializeIfNot"
 }
 
-func (a *InitializeCockroachDBAction) Execute(rc *client.ResourceClient, u *unstructured.Unstructured) error {
-	obj, err := rc.Get(context.TODO(), u.GetName(), metav1.GetOptions{})
+func (a *InitializeCockroachDBAction) Execute(ctx context.Context, rc *client.ResourceClient, u *unstructured.Unstructured) error {
+	obj, err := rc.Get(ctx, u.GetName(), metav1.GetOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to get resource while initializing CockroachDB")
 	}
@@ -74,7 +74,8 @@ func (a *InitializeCockroachDBAction) Execute(rc *client.ResourceClient, u *unst
 }
 
 func podExec(konfig *rest.Config, klient *kubernetes.Clientset, namespace string, name string, command []string) (*bytes.Buffer, *bytes.Buffer, error) {
-	pod, err := klient.CoreV1().Pods(namespace).Get(context.TODO(), name, metav1.GetOptions{})
+	ctx := context.TODO()
+	pod, err := klient.CoreV1().Pods(namespace).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		return nil, nil, err
 	}
@@ -85,13 +86,13 @@ func podExec(konfig *rest.Config, klient *kubernetes.Clientset, namespace string
 		Name(pod.GetName()).
 		Namespace(pod.GetNamespace()).
 		SubResource("exec").
-		Timeout(time.Second)
-	req.VersionedParams(&v1.PodExecOptions{
-		Container: pod.Spec.Containers[0].Name,
-		Command:   command,
-		Stdout:    true,
-		Stderr:    true,
-	}, scheme.ParameterCodec)
+		Timeout(10*time.Second).
+		VersionedParams(&v1.PodExecOptions{
+			Container: pod.Spec.Containers[0].Name,
+			Command:   command,
+			Stdout:    true,
+			Stderr:    true,
+		}, scheme.ParameterCodec)
 
 	exec, err := remotecommand.NewSPDYExecutor(konfig, "POST", req.URL())
 	if err != nil {
@@ -100,7 +101,7 @@ func podExec(konfig *rest.Config, klient *kubernetes.Clientset, namespace string
 
 	stdout := &bytes.Buffer{}
 	stderr := &bytes.Buffer{}
-	err = exec.Stream(remotecommand.StreamOptions{
+	err = exec.StreamWithContext(ctx, remotecommand.StreamOptions{
 		Stdout: stdout,
 		Stderr: stderr,
 		Tty:    false,

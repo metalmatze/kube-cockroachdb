@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine AS build
+FROM golang:1.20-alpine AS build
 
 ARG ARCH=amd64
 ENV CGO_ENABLED=0
@@ -12,7 +12,7 @@ COPY . /app
 RUN make build -o operator/api/v1alphav1/zz_generated.deepcopy.go
 RUN cp ./kubernetes.libsonnet ./operator/kubernetes.libsonnet
 
-FROM alpine:3.11
+FROM alpine:3.18
 
 COPY --from=build /app/operator/operator /kube-cockroachdb/operator/operator
 COPY --from=build /app/operator/config.yaml /kube-cockroachdb/operator/config.yaml
