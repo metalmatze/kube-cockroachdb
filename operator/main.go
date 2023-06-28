@@ -80,9 +80,18 @@ func main() {
 			//client.UpdatePreparationFunc(client.PrepareStatefulsetForUpdate),
 		})
 
-		renderer := jsonnet.NewRenderer(logger, jsonnetPath, map[string]func() ([]byte, error){})
+		renderer, err := jsonnet.NewRenderer(
+			logger,
+			"main.jsonnet",
+			map[string]func(context.Context) ([]byte, error){},
+			[]string{},
+			[]string{jsonnetPath},
+		)
+		if err != nil {
+			stdlog.Fatalf("error creating jsonnet renderer: %v", err)
+		}
 
-		c := checks.NewSuccessChecks(logger, cl)
+		c, err := checks.NewChecks(logger, cl, nil, nil)
 
 		runner := rollout.NewRunner(reg, log.With(logger, "component", "rollout-runner"), cl, renderer, c, false)
 		runner.SetObjectActions([]rollout.ObjectAction{
@@ -97,7 +106,7 @@ func main() {
 		if err != nil {
 			stdlog.Fatalf("error creating resource trigger: %v", err)
 		}
-		trigger.Register(config.NewConfigPasser(renderConfigPath, runner))
+		trigger.Register(config.NewFileConfigPasser(renderConfigPath, runner))
 
 		ctx, shutdown := context.WithCancel(context.Background())
 		gr.Add(func() error {
