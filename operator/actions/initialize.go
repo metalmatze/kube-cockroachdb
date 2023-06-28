@@ -14,14 +14,11 @@ import (
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/remotecommand"
 )
-
-var scheme = runtime.NewScheme()
-var parameterCodec = runtime.NewParameterCodec(scheme)
 
 type InitializeCockroachDBAction struct {
 	Konfig *rest.Config
@@ -95,9 +92,7 @@ func podExec(konfig *rest.Config, klient *kubernetes.Clientset, namespace string
 			Command:   command,
 			Stdout:    true,
 			Stderr:    true,
-		}, parameterCodec)
-
-	// fmt.Println(req.URL().String())
+		}, scheme.ParameterCodec)
 
 	exec, err := remotecommand.NewSPDYExecutor(konfig, "POST", req.URL())
 	if err != nil {
