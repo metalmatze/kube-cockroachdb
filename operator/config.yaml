@@ -27,14 +27,6 @@ resources:
         regex: '(.*)\/cockroachdb-(.*)-public$'
       - regex: '(.*)\/cockroachdb-(.*)-public$'
         replacement: "$1/$2"
-  - name: podDisruptionBudget
-    kind: PodDisruptionBudget
-    apiVersion: policy/v1
-    keyTransformations:
-      - action: keep
-        regex: '(.*)\/cockroachdb-(.*)'
-      - regex: '(.*)\/cockroachdb-(.*)'
-        replacement: "$1/$2"
   - name: serviceMonitor
     kind: ServiceMonitor
     apiVersion: monitoring.coreos.com/v1

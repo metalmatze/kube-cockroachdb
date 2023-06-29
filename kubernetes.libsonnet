@@ -13,7 +13,7 @@ function(params) {
           'app.kubernetes.io/component': 'database',
         },
       },
-      image: 'cockroachdb/cockroach:v20.1.5',
+      image: 'cockroachdb/cockroach:v22.2.11',
       replicas: 1,
       expose: {
         http: 8080,
@@ -186,20 +186,6 @@ function(params) {
       ] else [],
     },
   },
-  podDisruptionBudget: {
-    apiVersion: 'policy/v1',
-    kind: 'PodDisruptionBudget',
-    metadata: cockroachdb.metadata,
-    spec: {
-      maxUnavailable:  // (n-1)/2 if n>1
-        if cockroachdb.replicas > 1 then
-          std.floor((cockroachdb.replicas - 1) / 2)
-        else 1,
-      selector: {
-        matchLabels: cockroachdb.metadata.labels,
-      },
-    },
-  },
 
   jobInitialize: {
     apiVersion: 'batch/v1',
@@ -264,6 +250,4 @@ function(params) {
       },
     },
   },
-
-  // TODO: Add backups to object storage via CronJob and Minio
 }

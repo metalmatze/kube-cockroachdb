@@ -74,7 +74,7 @@ metadata:
     app.kubernetes.io/instance: basic
 spec:
   replicas: 3
-  image: cockroachdb/cockroach:v20.1.5
+  image: cockroachdb/cockroach:v22.2.11
 ```
 
 ## Monitoring
