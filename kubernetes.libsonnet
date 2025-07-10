@@ -22,6 +22,7 @@ function(params) {
       resources: {},
       storage: {},
       extraArgs: [],
+      disableLogToStderr: false,
     }
     + params,  // this merges your parameters with default ones
 
@@ -83,19 +84,20 @@ function(params) {
               imagePullPolicy: 'IfNotPresent',
               podManagementPolicy: 'Parallel',
               args:: [
-                'start',
-                '--logtostderr=WARNING',
-                '--insecure',
-                '--advertise-host=$(hostname -f)',
-                '--http-host=0.0.0.0',
-                '--join=%s-0.%s.%s.svc' % [
-                  cockroachdb.metadata.name,
-                  cockroachdb.metadata.name,
-                  cockroachdb.metadata.namespace,
-                ],
-                '--cache=25%',
-                '--max-sql-memory=25%',
-              ] + cockroachdb.extraArgs,
+                       'start',
+                       '--insecure',
+                       '--advertise-host=$(hostname -f)',
+                       '--http-host=0.0.0.0',
+                       '--join=%s-0.%s.%s.svc' % [
+                         cockroachdb.metadata.name,
+                         cockroachdb.metadata.name,
+                         cockroachdb.metadata.namespace,
+                       ],
+                       '--cache=25%',
+                       '--max-sql-memory=25%',
+                     ]
+                     + (if cockroachdb.disableLogToStderr then [] else ['--logtostderr=WARNING'])
+                     + cockroachdb.extraArgs,
               command: [
                 '/bin/bash',
                 '-ecx',

@@ -61,6 +61,12 @@ type CockroachDBSpec struct {
 
 	// ExtraArgs to append to the managed arguments.
 	ExtraArgs []string `json:"extraArgs,omitempty"`
+
+	// DisableLogToStderr indicates whether the log to stderr should be
+	// disabled. If set to true, the log will not be written to stderr. This is
+	// also necessary if a more granular logging config is passed via extra
+	// args.
+	DisableLogToStderr bool `json:"disableLogToStderr,omitempty"`
 }
 
 // Storage parts are taken from the Prometheus Operator:
