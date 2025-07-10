@@ -21,6 +21,7 @@ function(params) {
       },
       resources: {},
       storage: {},
+      extraArgs: [],
     }
     + params,  // this merges your parameters with default ones
 
@@ -94,7 +95,7 @@ function(params) {
                 ],
                 '--cache=25%',
                 '--max-sql-memory=25%',
-              ] + (if std.objectHas(cockroachdb, 'extraArgs') && std.isArray(cockroachdb.extraArgs) then cockroachdb.extraArgs else []),
+              ] + cockroachdb.extraArgs,
               command: [
                 '/bin/bash',
                 '-ecx',
