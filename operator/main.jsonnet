@@ -26,6 +26,7 @@ local config = import 'generic-operator/config';
       replicas: config.spec.replicas,
       resources: if std.objectHas(config.spec, 'resources') then config.spec.resources else {},
       storage: if std.objectHas(config.spec, 'storage') then config.spec.storage else {},
+      extraArgs: if std.objectHas(config.spec, 'extraArgs') then config.spec.extraArgs else {},
     })
   ),
   rollout: {
