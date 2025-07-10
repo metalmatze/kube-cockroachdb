@@ -17,11 +17,11 @@ GO     ?= $(shell which go)
 #	@echo "Running controller-gen"
 #	@$(CONTROLLER_GEN) <flags/args..>
 #
-CONTROLLER_GEN := $(GOBIN)/controller-gen-v0.8.0
+CONTROLLER_GEN := $(GOBIN)/controller-gen-v0.18.0
 $(CONTROLLER_GEN): $(BINGO_DIR)/controller-gen.mod
 	@# Install binary/ries using Go 1.14+ build command. This is using bwplotka/bingo-controlled, separate go module with pinned dependencies.
-	@echo "(re)installing $(GOBIN)/controller-gen-v0.8.0"
-	@cd $(BINGO_DIR) && $(GO) build -mod=mod -modfile=controller-gen.mod -o=$(GOBIN)/controller-gen-v0.8.0 "sigs.k8s.io/controller-tools/cmd/controller-gen"
+	@echo "(re)installing $(GOBIN)/controller-gen-v0.18.0"
+	@cd $(BINGO_DIR) && $(GO) build -mod=mod -modfile=controller-gen.mod -o=$(GOBIN)/controller-gen-v0.18.0 "sigs.k8s.io/controller-tools/cmd/controller-gen"
 
 EMBEDMD := $(GOBIN)/embedmd-v1.0.0
 $(EMBEDMD): $(BINGO_DIR)/embedmd.mod

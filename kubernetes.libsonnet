@@ -94,7 +94,7 @@ function(params) {
                 ],
                 '--cache=25%',
                 '--max-sql-memory=25%',
-              ],
+              ] + (if std.objectHas(cockroachdb, 'extraArgs') && std.isArray(cockroachdb.extraArgs) then cockroachdb.extraArgs else []),
               command: [
                 '/bin/bash',
                 '-ecx',
@@ -179,7 +179,7 @@ function(params) {
             name: 'datadir',
             namespace: cockroachdb.metadata.namespace,
           },
-          spec+:{
+          spec+: {
             accessModes: ['ReadWriteOnce'],
           },
         },
