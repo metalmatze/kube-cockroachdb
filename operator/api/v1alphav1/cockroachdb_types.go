@@ -58,6 +58,9 @@ type CockroachDBSpec struct {
 
 	// Storage spec to specify how storage shall be used.
 	Storage *StorageSpec `json:"storage,omitempty"`
+
+	// ExtraArgs to append to the managed arguments.
+	ExtraArgs []string `json:"extraArgs,omitempty"`
 }
 
 // Storage parts are taken from the Prometheus Operator:

@@ -48,6 +48,11 @@ spec:
             description: CockroachDBSpec defines the desired state of a CockroachDB
               instance.
             properties:
+              extraArgs:
+                description: ExtraArgs to append to the managed arguments.
+                items:
+                  type: string
+                type: array
               image:
                 type: string
               replicas:
